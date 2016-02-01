@@ -25,5 +25,20 @@
       {% endfor %}
       </tbody>
     </table>
+    <div class="pagination">
+      <span class="step-links">
+        {% if renderlist.has_previous %}
+            <a href="?page={{ renderlist.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ renderlist.number }} of {{ renderlist.paginator.num_pages }}.
+        </span>
+
+        {% if renderlist.has_next %}
+            <a href="?page={{ renderlist.next_page_number }}">next</a>
+        {% endif %}
+      </span>
+    </div>
   </body>
 </html>

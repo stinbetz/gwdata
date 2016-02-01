@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from .models import Item
 
@@ -30,12 +31,17 @@ def index(request):
     return render(request, 'data/index.html', context)
 
 def chooselist(request):
-    print "dir: ", dir()
-    # template = loader.get_template('data/list.html')
-    items = Item.objects.order_by('item_name')
-    # items = get_full_list()
+    item_list = Item.objects.order_by('item_name')
+    paginator = Paginator(item_list, 100)
+
+    page = request.GET.get('page')
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)
     context = {'renderlist': items}
-    # return HttpResponse(template.render(context, request))
     return render(request, 'data/list.html', context)
 
 def generatelist(request):
