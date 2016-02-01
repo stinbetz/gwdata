@@ -3,6 +3,10 @@
     <title>GuildWars2 Data Table</title>
   </head>
   <body>
+    <form method="get" action="{% url 'chooselist' %}">
+      <input type="text" placeholder="Search For" name="searchText">
+      <input type="submit" value="search">
+    </form>
     <table>
       <thead>
         <tr>

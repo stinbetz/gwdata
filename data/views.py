@@ -31,7 +31,10 @@ def index(request):
     return render(request, 'data/index.html', context)
 
 def chooselist(request):
-    item_list = Item.objects.order_by('item_name')
+    try:
+        item_list = Item.objects.filter(item_name__icontains=request.GET['searchText'])
+    except KeyError:
+        item_list = Item.objects.order_by('item_name')
     paginator = Paginator(item_list, 100)
 
     page = request.GET.get('page')

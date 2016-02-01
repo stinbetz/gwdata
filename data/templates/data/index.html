@@ -3,6 +3,10 @@
     <title>GuildWars2 Data Table</title>
   </head>
   <body>
+    <form method="get" action="{% url 'chooselist' %}">
+      <input type="text" value="Search For">
+      <input type="submit">Search</input>
+    </form>
     <table>
       <thead>
         <tr>
@@ -24,7 +28,7 @@
       </tbody>
     </table>
     <form action="{% url 'load' %}" method="get">
-      <input type="submit" value="Load Data" 
+      <input type="submit" value="Load Data"
          name="Submit" id="frm1_submit" />
     </form>
   </body>
