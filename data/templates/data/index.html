@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>GuildWars2 Data Table</title>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>icon</th>
+          <th>name</th>
+          <th>buy price</th>
+          <th>sell price</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in renderlist %}
+        <tr>
+          <td><img src="{{item.url}}"/></td>
+          <td>{{item.name}}</td>
+          <td>{{item.buyprice}}</td>
+          <td>{{item.sellprice}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <form action="{% url 'load' %}" method="get">
+      <input type="submit" value="Load Data" 
+         name="Submit" id="frm1_submit" />
+    </form>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>GuildWars2 Data Table</title>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>active</th>
+          <th>icon</th>
+          <th>name</th>
+          <th>buy price</th>
+          <th>sell price</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in renderlist %}
+        <tr>
+          <td><input type="checkbox" value={{item.selected}}></td>
+          <td><img style="height: 128px; width: 128px" src="{{item.item_icon}}"/></td>
+          <td>{{item.item_name}}</td>
+          <td>{{item.item_buy_price}}</td>
+          <td>{{item.item_sell_price}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
