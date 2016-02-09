@@ -6,27 +6,28 @@ from .models import Item
 # Create your views here.
 
 def index(request):
-    items = [{'name': u'Superior Rune of the Chronomancer',
-              'url': u'https://render.guildwars2.com/file/80FE6B56334AB53830DD2D0F61992DF4CC44A710/1201519.png',
-              'buyprice': '23400',
-              'sellprice': '29050'}
-            ,{'name': u'Healing Seeker Coat',
-              'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
-              'buyprice': '302',
-              'sellprice': '990'}
-            ,{'name': u'Precise Seeker Coat',
-              'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
-              'buyprice': '2054',
-              'sellprice': '5834'}
-            ,{'name': u'Precise Seeker Coat',
-              'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
-              'buyprice': '432',
-              'sellprice': '3015'}
-            ,{'name': u'Resilient Seeker Coat',
-              'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
-              'buyprice': '248',
-              'sellprice': '1135'}
-             ]
+    items = Item.objects.filter(selected = True)
+    # items = [{'name': u'Superior Rune of the Chronomancer',
+    #           'url': u'https://render.guildwars2.com/file/80FE6B56334AB53830DD2D0F61992DF4CC44A710/1201519.png',
+    #           'buyprice': '23400',
+    #           'sellprice': '29050'}
+    #         ,{'name': u'Healing Seeker Coat',
+    #           'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
+    #           'buyprice': '302',
+    #           'sellprice': '990'}
+    #         ,{'name': u'Precise Seeker Coat',
+    #           'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
+    #           'buyprice': '2054',
+    #           'sellprice': '5834'}
+    #         ,{'name': u'Precise Seeker Coat',
+    #           'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
+    #           'buyprice': '432',
+    #           'sellprice': '3015'}
+    #         ,{'name': u'Resilient Seeker Coat',
+    #           'url': u'https://render.guildwars2.com/file/BBC80CD999BA3994B7C3F9B30F30FE716407E890/61417.png',
+    #           'buyprice': '248',
+    #           'sellprice': '1135'}
+    #          ]
     context = {'renderlist': items}
     return render(request, 'data/index.html', context)
 
