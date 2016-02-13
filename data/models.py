@@ -10,3 +10,4 @@ class Item(models.Model):
     item_sell_price = models.IntegerField()
     item_buy_price = models.IntegerField()
     selected = models.BooleanField(default="false")
+    item_api_id = models.CharField(max_length=20, blank=True)
