@@ -1,16 +1,18 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 import simplejson
-from .models import Item
+from .models import Item, Recipe, Ingredient
 import requests
+from django.shortcuts import redirect
 
 # Create your views here.
 
 def index(request):
     items = Item.objects.filter(selected = True)
     renderitems = []
-    # print "found " + str(len(items)) + " items"
     if len(items) != 0:
         idlist = ""
         for item in items:
@@ -106,3 +108,71 @@ def select_item(request):
             item_to_update.selected = False
         item_to_update.save()
     return HttpResponse(simplejson.dumps({'success': True}))
+
+def recipes(request):
+    renderrecipes = []
+    recipes = Recipe.objects.all()
+
+    #update item buy/sell prices
+    ingredients = Ingredient.objects.all()
+    if len(ingredients) != 0:
+        idlist = ""
+        for ingredient in ingredients:
+            idlist += str(ingredient.item.item_api_id) + ","
+        idlist = idlist[:-1]
+        updateresponse = requests.get("https://api.guildwars2.com/v2/commerce/prices?ids=%s" % idlist)
+        updates = updateresponse.json()
+        for itemupdate in updates:
+            update = Item.objects.get(item_api_id=itemupdate["id"])
+            update.item_sell_price = itemupdate["sells"]["unit_price"]
+            update.item_buy_price = itemupdate["buys"]["unit_price"]
+            update.save()
+
+
+    items = Item.objects.filter(selected = True)
+    for recipe in recipes:
+        cost = 0
+        recipe_profit = 0
+        renderrecipes.append({"result":{'quantity': recipe.result_quantity, 'item_icon': recipe.result.item_icon, 'item_name': recipe.result.item_name}, 'ingredients': [], 'profit': parse_money_for_display(recipe_profit)})
+        ingredients = Ingredient.objects.filter(recipe=recipe)
+        for ingredient in ingredients:
+            cost += ingredient.quantity * ingredient.item.item_buy_price
+            renderrecipes[-1]['ingredients'].append({"item_icon": ingredient.item.item_icon, "item_name": ingredient.item.item_name,"item_buy_price": parse_money_for_display(ingredient.item.item_buy_price),"quantity": ingredient.quantity})
+        net = recipe.result.item_sell_price * recipe.result_quantity
+        gross = net * 0.85
+        recipe_profit = gross - cost
+        renderrecipes[-1]['profit'] = parse_money_for_display(recipe_profit)
+    context = {'recipelist': renderrecipes, 'itemlist': items}
+    return render(request, 'data/recipes.html', context)
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def create_recipe(request):
+    recipe_name = request.POST['recipename']
+    ingredients = request.POST['ingredients']
+    ingredients = eval(str(ingredients))
+    result = request.POST['result']
+    result_quantity = request.POST['resultquantity']
+
+    recipe_result = Item.objects.get(item_name=result)
+    newrecipe = Recipe(recipe_name=recipe_name, result=recipe_result, result_quantity=result_quantity)
+    newrecipe.save()
+    for ingred in ingredients:
+        ingredient_item = Item.objects.get(item_name=ingred['name'])
+        new_ingredient = Ingredient(recipe=newrecipe, quantity=ingred['quantity'], item=ingredient_item)
+        new_ingredient.save()
+
+    return redirect('recipes')
+
+def parse_money_for_display(value):
+    temp = value
+    loss = value < 0
+    gold, silver, copper = 0, 0, 0
+    copper = temp % 100
+    if temp >= 100:
+        temp = (temp - copper) / 100
+        silver = temp % 100
+        if temp >= 100:
+            temp = (temp - copper) / 100
+            gold = temp % 100
+    return {'gold': gold, 'silver': silver, 'copper': copper, 'loss': loss}

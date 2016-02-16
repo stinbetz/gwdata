@@ -11,3 +11,13 @@ class Item(models.Model):
     item_buy_price = models.IntegerField()
     selected = models.BooleanField(default="false")
     item_api_id = models.CharField(max_length=20, blank=True)
+
+class Recipe(models.Model):
+    recipe_name = models.CharField(max_length=200)
+    result = models.ForeignKey('Item')
+    result_quantity = models.IntegerField(default=0)
+
+class Ingredient(models.Model):
+    recipe = models.ForeignKey('Recipe', related_name='ingredients')
+    item = models.ForeignKey('Item')
+    quantity = models.IntegerField()

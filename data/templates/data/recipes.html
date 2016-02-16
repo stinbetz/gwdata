@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <!--<script type="text/javascript" src="/media/web/jquery.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script>
+      function addItem() {
+        $('#ingredientList').append('<div class="ingredient"><select>{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input style="display: inline;" type=number></div>');
+      };
+      function createRecipe() {
+        var ingredientContainer = document.querySelector('#ingredientList');
+        var recipename = document.getElementById('recipeName').value;
+        var result = document.getElementById('result').value
+        var resultquantity = document.getElementById('resultQuantity').value
+        var ingredientstosend = [];
+        var ingredientCount = ingredientContainer.children.length;
+        for (var i=0; i<ingredientCount; i++) {
+          ingredientstosend.push({name: ingredientContainer.children[i].children[0].value, quantity: ingredientContainer.children[i].children[2].value});
+        }
+        console.log(ingredientstosend);
+        $.ajax({url: '/data/createrecipe/', data: { recipename: recipename, ingredients: JSON.stringify(ingredientstosend), result: result, resultquantity: resultquantity}, type: 'POST'});
+      };
+    </script>
+    <title>GuildWars2 Cookbook</title>
+  </head>
+  <body>
+    <a href="{% url 'index' %}">Your list</a>
+    <table>
+      <thead>
+        <tr>
+          <th>ingredients</th>
+          <th>result</th>
+          <th>current profit</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for recipe in recipelist %}
+        <tr>
+          {% for ingredient in recipe.ingredients %}
+          <td><img style="height: 32px; width: 32px" src="{{ingredient.item_icon}}"/>
+            <span>{{ingredient.item_name}}</span>
+            <span><img style="height: 16px; width: 16px" src="/static/data/Gold_coin.png">{{ingredient.item_buy_price.gold}}<img style="height: 16px; width: 16px" src="/static/data/Silver_coin.png">{{ingredient.item_buy_price.silver}}<img style="height: 16px; width: 16px" src="/static/data/Copper_coin.png">{{ingredient.item_buy_price.copper}}</span>
+            <span> x {{ingredient.quantity}}</span>
+          </td>
+          {% endfor %}
+          <td><span><img style="height: 32px; width: 32px" src="{{recipe.result.item_icon}}">{{recipe.result.item_name}}<span> x {{recipe.result.quantity}}</span></span></td>
+          <td style="background-color: {% if recipe.profit.loss == True %}red{% else %}green{% endif %}"><img style="height: 16px; width: 16px" src="/static/data/Gold_coin.png">{{recipe.profit.gold}}<img style="height: 16px; width: 16px" src="/static/data/Silver_coin.png">{{recipe.profit.silver}}<img style="height: 16px; width: 16px" src="/static/data/Copper_coin.png">{{recipe.profit.copper}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <h2>Create a recipe</h2>
+    <p style="display: inline;">Recipe nickname</p>
+    <input id="recipeName" type=text>
+    <div id="ingredientList">
+      <div class="ingredient">
+       <select>{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input style="display: inline;" type=number>
+     </div>
+    </div>
+    <button onclick='addItem()'>add ingredient</button>
+    <h3>Product</h3>
+    <select id="result">{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input id="resultQuantity" style="display: inline;" type=number>
+    <br><button onclick='createRecipe()'>create recipe</button>
+  </body>
+</html>
