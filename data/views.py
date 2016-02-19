@@ -153,9 +153,14 @@ def create_recipe(request):
     ingredients = eval(str(ingredients))
     result = request.POST['result']
     result_quantity = request.POST['resultquantity']
+    is_mystic_forge = request.POST['isMysticForge']
+    if is_mystic_forge == 'false':
+        is_mystic_forge = False
+    else:
+        is_mystic_forge = True
 
     recipe_result = Item.objects.get(item_name=result)
-    newrecipe = Recipe(recipe_name=recipe_name, result=recipe_result, result_quantity=result_quantity)
+    newrecipe = Recipe(recipe_name=recipe_name, result=recipe_result, result_quantity=result_quantity, mystic_forge=is_mystic_forge)
     newrecipe.save()
     for ingred in ingredients:
         ingredient_item = Item.objects.get(item_name=ingred['name'])

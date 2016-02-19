@@ -13,11 +13,12 @@
         var resultquantity = document.getElementById('resultQuantity').value
         var ingredientstosend = [];
         var ingredientCount = ingredientContainer.children.length;
+        var isMysticForge = document.getElementById('isMysticForge').checked;
         for (var i=0; i<ingredientCount; i++) {
           ingredientstosend.push({name: ingredientContainer.children[i].children[0].value, quantity: ingredientContainer.children[i].children[2].value});
         }
         console.log(ingredientstosend);
-        $.ajax({url: '/data/createrecipe/', data: { recipename: recipename, ingredients: JSON.stringify(ingredientstosend), result: result, resultquantity: resultquantity}, type: 'POST'});
+        $.ajax({url: '/data/createrecipe/', data: { recipename: recipename, ingredients: JSON.stringify(ingredientstosend), result: result, resultquantity: resultquantity, isMysticForge: isMysticForge}, type: 'POST'});
       };
     </script>
     <title>GuildWars2 Cookbook</title>
@@ -50,7 +51,7 @@
     </table>
     <h2>Create a recipe</h2>
     <p style="display: inline;">Recipe nickname</p>
-    <input id="recipeName" type=text>
+    <input id="recipeName" type=text><p style="display: inline;">  Mystic Forge recipe: </p><input style="display: inline;" id=isMysticForge type="checkbox">
     <div id="ingredientList">
       <div class="ingredient">
        <select>{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input style="display: inline;" type=number>

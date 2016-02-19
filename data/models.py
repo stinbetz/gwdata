@@ -13,6 +13,7 @@ class Item(models.Model):
     item_api_id = models.CharField(max_length=20, blank=True)
 
 class Recipe(models.Model):
+    mystic_forge = models.BooleanField(default="false")
     recipe_name = models.CharField(max_length=200)
     result = models.ForeignKey('Item')
     result_quantity = models.IntegerField(default=0)
