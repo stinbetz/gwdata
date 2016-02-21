@@ -110,8 +110,8 @@ def select_item(request):
     return HttpResponse(simplejson.dumps({'success': True}))
 
 def recipes(request):
-    renderrecipes = []
-    recipes = Recipe.objects.all()
+    mfrecipes = []
+    craftingrecipes = []
 
     #update item buy/sell prices
     ingredients = Ingredient.objects.all()
@@ -128,21 +128,36 @@ def recipes(request):
             update.item_buy_price = itemupdate["buys"]["unit_price"]
             update.save()
 
-
     items = Item.objects.filter(selected = True)
+
+    recipes = Recipe.objects.filter(mystic_forge=True)
     for recipe in recipes:
         cost = 0
         recipe_profit = 0
-        renderrecipes.append({"result":{'quantity': recipe.result_quantity, 'item_icon': recipe.result.item_icon, 'item_name': recipe.result.item_name}, 'ingredients': [], 'profit': parse_money_for_display(recipe_profit)})
+        mfrecipes.append({"result":{'quantity': recipe.result_quantity, 'item_icon': recipe.result.item_icon, 'item_name': recipe.result.item_name}, 'ingredients': [], 'profit': parse_money_for_display(recipe_profit), 'name': recipe.recipe_name})
         ingredients = Ingredient.objects.filter(recipe=recipe)
         for ingredient in ingredients:
             cost += ingredient.quantity * ingredient.item.item_buy_price
-            renderrecipes[-1]['ingredients'].append({"item_icon": ingredient.item.item_icon, "item_name": ingredient.item.item_name,"item_buy_price": parse_money_for_display(ingredient.item.item_buy_price),"quantity": ingredient.quantity})
+            mfrecipes[-1]['ingredients'].append({"item_icon": ingredient.item.item_icon, "item_name": ingredient.item.item_name,"item_buy_price": parse_money_for_display(ingredient.item.item_buy_price),"quantity": ingredient.quantity})
         net = recipe.result.item_sell_price * recipe.result_quantity
         gross = net * 0.85
         recipe_profit = gross - cost
-        renderrecipes[-1]['profit'] = parse_money_for_display(recipe_profit)
-    context = {'recipelist': renderrecipes, 'itemlist': items}
+        mfrecipes[-1]['profit'] = parse_money_for_display(recipe_profit)
+
+    recipes = Recipe.objects.filter(mystic_forge=False)
+    for recipe in recipes:
+        cost = 0
+        recipe_profit = 0
+        craftingrecipes.append({"result":{'quantity': recipe.result_quantity, 'item_icon': recipe.result.item_icon, 'item_name': recipe.result.item_name}, 'ingredients': [], 'profit': parse_money_for_display(recipe_profit), 'name': recipe.recipe_name})
+        ingredients = Ingredient.objects.filter(recipe=recipe)
+        for ingredient in ingredients:
+            cost += ingredient.quantity * ingredient.item.item_buy_price
+            craftingrecipes[-1]['ingredients'].append({"item_icon": ingredient.item.item_icon, "item_name": ingredient.item.item_name,"item_buy_price": parse_money_for_display(ingredient.item.item_buy_price),"quantity": ingredient.quantity})
+        net = recipe.result.item_sell_price * recipe.result_quantity
+        gross = net * 0.85
+        recipe_profit = gross - cost
+        craftingrecipes[-1]['profit'] = parse_money_for_display(recipe_profit)
+    context = {'mflist': mfrecipes, 'craftinglist': craftingrecipes, 'itemlist': items}
     return render(request, 'data/recipes.html', context)
 
 @csrf_exempt
