@@ -166,18 +166,40 @@
     <!-- end crafting recipes -->
 
 
-    <h2>Create a recipe</h2>
-    <p style="display: inline;">Recipe nickname</p>
-    <input id="recipeName" type=text><p style="display: inline;">  Mystic Forge recipe: </p><input style="display: inline;" id=isMysticForge type="checkbox">
-    <div id="ingredientList">
-      <div class="ingredient">
-       <select>{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input style="display: inline;" type=number>
-     </div>
+    <div class="page-header">
+      <h2> Create Recipe </h2>
     </div>
-    <button onclick='addItem()'>add ingredient</button>
-    <h3>Product</h3>
-    <select id="result">{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input id="resultQuantity" style="display: inline;" type=number>
-    <br><button onclick='createRecipe()'>create recipe</button>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label for="recipeNickname" class="col-sm-2 control-label">Recipe Nickname</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="recipeNickname" placeholder="Recipe Nickname">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ingredient" class="col-sm-2 control-label">Ingredient</label>
+        <div class="col-sm-10">
+          <select class="form-control" id=ingredient>
+            {% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+    <!-- <form class="form-horizon">
+      <div class="form-group">
+        <p style="display: inline;">Recipe nickname</p>
+        <input id="recipeName" type=text><p style="display: inline;">  Mystic Forge recipe: </p><input style="display: inline;" id=isMysticForge type="checkbox">
+      </div>
+      <div id="ingredientList">
+        <div class="ingredient">
+         <select>{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input style="display: inline;" type=number>
+       </div>
+      </div>
+      <button onclick='addItem()'>add ingredient</button>
+      <h3>Product</h3>
+      <select id="result">{% for item in itemlist %}<option value="{{item.item_name}}">{{item.item_name}}</option>{% endfor %}</select><p style="display: inline;">Quantity:</p><input id="resultQuantity" style="display: inline;" type=number>
+      <br><button onclick='createRecipe()'>create recipe</button>
+    </form> -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
